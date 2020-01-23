@@ -1,5 +1,5 @@
 export function setupScreen(canvas, game) {
-    const { screen: {width, height, pixelsPerFields} } = game.state
+    const { screen: { width, height, pixelsPerFields } } = game.state
     canvas.width = width * pixelsPerFields
     canvas.height = height * pixelsPerFields
 }
@@ -7,8 +7,8 @@ export function setupScreen(canvas, game) {
 export default function renderScreen(screen, scoreTable, game, requestAnimationFrame, currentPlayerId) {
     const context = screen.getContext('2d')
     context.fillStyle = 'white'
-    const { screen: { width, height, pixelsPerFields }} = game.state
-    context.clearRect(0, 0, width*pixelsPerFields, height*pixelsPerFields)
+    const { screen: { width, height, pixelsPerFields } } = game.state
+    context.clearRect(0, 0, width * pixelsPerFields, height * pixelsPerFields)
 
     for (const playerId in game.state.players) {
         const player = game.state.players[playerId]
@@ -17,11 +17,11 @@ export default function renderScreen(screen, scoreTable, game, requestAnimationF
 
     for (const fruitId in game.state.fruits) {
         const fruit = game.state.fruits[fruitId]
-        drawFruit(context, fruit, game)        
+        drawFruit(context, fruit, game)
     }
 
     const currentPlayer = game.state.players[currentPlayerId]
-    if(currentPlayer) {
+    if (currentPlayer) {
         const isCurrentPlayer = true
         drawPlayer(context, currentPlayer, game, isCurrentPlayer)
     }
@@ -34,7 +34,7 @@ export default function renderScreen(screen, scoreTable, game, requestAnimationF
 }
 
 function drawPlayer(screenContext, player, game, isCurrentPlayer = false) {
-    const { screen: { pixelsPerFields }} = game.state
+    const { screen: { pixelsPerFields } } = game.state
 
     let eyeAndMouthColors = 'black'
     let faceColor = getColorFromScore(player.score)
@@ -52,32 +52,53 @@ function drawPlayer(screenContext, player, game, isCurrentPlayer = false) {
 
     // Draw eyes and mouth
     screenContext.fillStyle = eyeAndMouthColors
-    screenContext.fillRect(x+1,y+1,1,1)
-    screenContext.fillRect(x+3,y+1,1,1)
-    screenContext.fillRect(x+1,y+3,3,1)
+    screenContext.fillRect(x + 1, y + 1, 1, 1)
+    screenContext.fillRect(x + 3, y + 1, 1, 1)
+    screenContext.fillRect(x + 1, y + 3, 3, 1)
 }
 
 function drawFruit(screenContext, fruit, game) {
-    const { screen: { pixelsPerFields }} = game.state
+    const { screen: { pixelsPerFields } } = game.state
     screenContext.globalAlpha = 1
-    
+
     let { x, y } = fruit
     x *= pixelsPerFields
     y *= pixelsPerFields
-    
+    let color = getColorFromTotal(fruit, game.state.fruits)
+
     // Draw strawberry body
-    screenContext.fillStyle = '#ff0000'
-    screenContext.fillRect(x, y+1, 1, 2)
-    screenContext.fillRect(x+4, y+1, 1, 2)
-    screenContext.fillRect(x+1, y+1, 1, 3)
-    screenContext.fillRect(x+3, y+1, 1, 3)
-    screenContext.fillRect(x+2, y+2, 1, 3)
- 
+    screenContext.fillStyle = color
+    screenContext.fillRect(x, y + 1, 1, 2)
+    screenContext.fillRect(x + 4, y + 1, 1, 2)
+    screenContext.fillRect(x + 1, y + 1, 1, 3)
+    screenContext.fillRect(x + 3, y + 1, 1, 3)
+    screenContext.fillRect(x + 2, y + 2, 1, 3)
+
     // Draw green leaf
     screenContext.fillStyle = '#00a933'
-    screenContext.fillRect(x+1,y,3,1)
-    screenContext.fillRect(x+2,y+1,1,1)
-    
+    screenContext.fillRect(x + 1, y, 3, 1)
+    screenContext.fillRect(x + 2, y + 1, 1, 1)
+
+}
+
+/** todo: groupBy coords x-y */
+function getColorFromTotal(fruit, fruits) {
+    const { x, y } = fruit
+    let samePosition = Object.values(fruits).filter(compare => compare.x === x && compare.y === y)
+    let total = samePosition.length
+    let color = '#ff0000'
+    if (total >= 20) {
+        color = `#0040ff`
+    } else if (total >= 10) {
+        color = `#ff0000`
+    } else if (total >= 5) {
+        color = `#ffbf00`
+    } else {
+        color = `#ffecb3`
+    }
+
+    console.log({ x, y, total, color })
+    return color
 }
 
 function getColorFromScore(score) {
@@ -109,8 +130,8 @@ function updateScoreTable(scoreTable, game, currentPlayerId) {
             score: player.score,
         })
     }
-    
-    const playersSortedByScore = playersArray.sort( (first, second) => {
+
+    const playersSortedByScore = playersArray.sort((first, second) => {
         if (first.score < second.score) {
             return 1
         }
