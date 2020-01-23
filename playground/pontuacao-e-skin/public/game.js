@@ -12,7 +12,7 @@ export default function createGame() {
         config: {
             maxCollisionDistance: 4,
             lossOnCollision: 5,
-            initialScore: 50,
+            initialScore: 150,
         }
     }
 
