@@ -11,8 +11,9 @@ export default function createGame() {
         },
         config: {
             maxCollisionDistance: 4,
-            lossOnCollision: 5,
+            shockCost: 5,
             initialScore: 150,
+            autoDropFruitValue: 30,
         }
     }
 
@@ -22,7 +23,7 @@ export default function createGame() {
         const frequency = 2000
 
         //todo: change fruit colors based on quantity on same coord
-        //setInterval(addFruit, frequency)
+        setInterval(addFruit, frequency)
     }
 
     function subscribe(observerFunction) {
@@ -71,20 +72,27 @@ export default function createGame() {
     }
 
     function addFruit(command) {
-        const fruitId = command ? command.fruitId : Math.floor(Math.random() * 10000000)
+
         const fruitX = command ? command.fruitX : Math.floor(Math.random() * state.screen.width)
         const fruitY = command ? command.fruitY : Math.floor(Math.random() * state.screen.height)
+        const fruitId = command ? command.fruitId : `${fruitX}-${fruitY}`
+        const quantity = command ? command.quantity : state.config.autoDropFruitValue
 
+        const oldQuantity = state.fruits[fruitId] ? state.fruits[fruitId].quantity : 0
+
+        /** update quantity */
         state.fruits[fruitId] = {
             x: fruitX,
-            y: fruitY
+            y: fruitY,
+            quantity: quantity + oldQuantity
         }
 
         notifyAll({
             type: 'add-fruit',
-            fruitId: fruitId,
-            fruitX: fruitX,
-            fruitY: fruitY
+            fruitId: `${fruitX}-${fruitY}`,
+            fruitX,
+            fruitY,
+            quantity: quantity
         })
     }
 
@@ -134,7 +142,7 @@ export default function createGame() {
     /** check if user got points and generate collision 
      *  we can detect the direction of collision if save last position, to step back 
     */
-    function checkForPlayerCollision(playerId) {        
+    function checkForPlayerCollision(playerId) {
         const player = state.players[playerId]
 
         Object.keys(state.players).filter(k => k !== playerId).forEach(otherPlayerKey => {
@@ -143,8 +151,8 @@ export default function createGame() {
                 //remove 5 points and show extra 5 fruits for each player
                 //console.log(`COLLISION between ${playerId} and ${otherPlayerKey}`)
 
-                let otherPlayerDiscount = Math.min(otherPlayers.score, 5)
-                let playerDiscount = Math.min(player.score, 5)
+                let otherPlayerDiscount = Math.min(otherPlayers.score, state.config.shockCost)
+                let playerDiscount = Math.min(player.score, state.config.shockCost)
                 let totalFruits = otherPlayerDiscount + playerDiscount
 
                 state.players[otherPlayerKey].score -= otherPlayerDiscount
@@ -171,12 +179,18 @@ export default function createGame() {
         let maxY = Math.min(y + config.maxCollisionDistance, screen.height)
         let minY = Math.max(y - config.maxCollisionDistance, 0)
 
-        //better group by coordinates and add quantity?
-        for (let index = 0; index < qtd; index++) {
+        let rest = qtd
+        while (rest > 0) {
+            let fruitQtd = randomInteger(1, rest)
+            rest -= fruitQtd
+            let fruitX = randomInteger(minX, maxX)
+            let fruitY = randomInteger(minY, maxY)
+            let fruitId = `${fruitX}-${fruitY}`
             addFruit({
-                fruitId: Math.floor(Math.random() * 10000000),
-                fruitX: randomInteger(minX, maxX),
-                fruitY: randomInteger(minY, maxY)
+                fruitId,
+                fruitX,
+                fruitY,
+                quantity: fruitQtd
             })
         }
         //console.log(`state`,state)
@@ -192,7 +206,7 @@ export default function createGame() {
             if (player.x === fruit.x && player.y === fruit.y) {
                 // console.log(`COLLISION between ${playerId} and ${fruitId}`)
                 removeFruit({ fruitId: fruitId })
-                player.score += 1
+                player.score += fruit.quantity
             }
         }
     }

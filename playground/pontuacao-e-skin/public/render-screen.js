@@ -64,7 +64,7 @@ function drawFruit(screenContext, fruit, game) {
     let { x, y } = fruit
     x *= pixelsPerFields
     y *= pixelsPerFields
-    let color = getColorFromTotal(fruit, game.state.fruits)
+    let color = getFruitColor(fruit)
 
     // Draw strawberry body
     screenContext.fillStyle = color
@@ -81,23 +81,17 @@ function drawFruit(screenContext, fruit, game) {
 
 }
 
-/** todo: groupBy coords x-y */
-function getColorFromTotal(fruit, fruits) {
-    const { x, y } = fruit
-    let samePosition = Object.values(fruits).filter(compare => compare.x === x && compare.y === y)
-    let total = samePosition.length
-    let color = '#ff0000'
-    if (total >= 20) {
-        color = `#0040ff`
-    } else if (total >= 10) {
-        color = `#ff0000`
-    } else if (total >= 5) {
-        color = `#ffbf00`
-    } else {
-        color = `#ffecb3`
-    }
-
-    console.log({ x, y, total, color })
+function getFruitColor(fruit) {
+    const { x, y, quantity } = fruit
+    let color = '#D8BFD8'
+    if (quantity >= 50)
+        color = '#4B0082'
+    else if (quantity >= 30)
+        color = '#FF0000'
+    else if (quantity >= 20)
+        color = '#FF69B4'
+    else if (quantity >= 10)
+        color = '#FFC0CB'
     return color
 }
 
