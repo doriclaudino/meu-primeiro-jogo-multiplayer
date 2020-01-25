@@ -35,7 +35,7 @@ export default function renderScreen(screen, scoreTable, game, requestAnimationF
 
 
 function drawPot(context, fruit, game, potionsImg) {
-    const { screen: { pixelsPerFields } } = game.state
+    const { screen: { pixelsPerFields }, config: { showPotsValue } } = game.state
     let { x, y, quantity } = fruit
     x *= pixelsPerFields
     y *= pixelsPerFields
@@ -58,10 +58,12 @@ function drawPot(context, fruit, game, potionsImg) {
     const spriteY = column * pictSize
     context.drawImage(potionsImg, spriteY, spriteX, 16, 16, x, y, pixelsPerFields, pixelsPerFields);
 
-    //show texts
-    context.fillStyle = 'black'
-    context.font = "10px Arial";
-    context.fillText(quantity.toString(), x, y - 3);
+    if (showPotsValue) {
+        //show texts
+        context.fillStyle = 'black'
+        context.font = "10px Arial";
+        context.fillText(quantity.toString(), x, y - 3);
+    }
 }
 
 //all skin is based on 5 pixels?, this function convert for responsive values
