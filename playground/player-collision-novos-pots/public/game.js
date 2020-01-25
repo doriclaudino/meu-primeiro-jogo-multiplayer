@@ -15,7 +15,7 @@ export default function createGame() {
             wallCollisionCost: 150,
             initialScore: 500,
             autoDropFruitValue: 50,
-            showPotsValue: true,
+            showPotsValue: false,
         }
     }
 
