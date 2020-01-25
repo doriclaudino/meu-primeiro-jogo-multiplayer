@@ -11,7 +11,8 @@ export default function createGame() {
         },
         config: {
             maxCollisionDistance: 4,
-            shockCost: 5,
+            playerCollisionCost: 5,
+            wallCollisionCost: 30,
             initialScore: 150,
             autoDropFruitValue: 30,
         }
@@ -46,8 +47,9 @@ export default function createGame() {
         const playerY = 'playerY' in command ? command.playerY : Math.floor(Math.random() * state.screen.height)
 
         state.players[playerId] = {
+            playerId: playerId,
             x: playerX,
-            y: playerY,
+            y: playerY,            
             score: state.config.initialScore
         }
 
@@ -107,29 +109,36 @@ export default function createGame() {
         })
     }
 
+    function onBorderShock(player) {
+        const { config: { wallCollisionCost } } = state
+        let shockCost = Math.min(player.score, wallCollisionCost)
+        state.players[player.playerId].score -= shockCost
+        explodeFruits(shockCost, player.x, player.y)
+    }
+
     function movePlayer(command) {
         notifyAll(command)
 
-           const acceptedMoves = {
+        const acceptedMoves = {
             ArrowUp(player) {
                 if (player.y - 1 >= 0) {
                     player.y = player.y - 1
-                }//show on wall?
+                } else onBorderShock(player)
             },
             ArrowRight(player) {
                 if (player.x + 1 < state.screen.width) {
                     player.x = player.x + 1
-                }
+                } else onBorderShock(player)
             },
             ArrowDown(player) {
                 if (player.y + 1 < state.screen.height) {
                     player.y = player.y + 1
-                }
+                } else onBorderShock(player)
             },
             ArrowLeft(player) {
                 if (player.x - 1 >= 0) {
                     player.x = player.x - 1
-                }
+                } else onBorderShock(player)
             }
         }
 
@@ -159,8 +168,8 @@ export default function createGame() {
                 //remove 5 points and show extra 5 fruits for each player
                 //console.log(`COLLISION between ${playerId} and ${otherPlayerKey}`)
 
-                let otherPlayerDiscount = Math.min(otherPlayers.score, state.config.shockCost)
-                let playerDiscount = Math.min(player.score, state.config.shockCost)
+                let otherPlayerDiscount = Math.min(otherPlayers.score, state.config.playerCollisionCost)
+                let playerDiscount = Math.min(player.score, state.config.playerCollisionCost)
                 let totalFruits = otherPlayerDiscount + playerDiscount
 
                 state.players[otherPlayerKey].score -= otherPlayerDiscount

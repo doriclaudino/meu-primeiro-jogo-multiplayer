@@ -11,6 +11,14 @@
                 text-align: center;
             }
 
+            .damage-border {
+                outline: none;
+                border: 2px solid #ff0000;
+                box-shadow: 0px 0px 8px #ff0000;
+                -moz-box-shadow: 0px 0px 8px #ff0000;
+                -webkit-box-shadow: 0px 0px 8px #ff0000;
+            }
+
             #screen {
                 border: 1px solid #CCC;
                 image-rendering: pixelated;
@@ -26,6 +34,11 @@
                 margin-right: 20px;
                 display: inline-block;
                 vertical-align: top;
+                outline: none;
+                border: 2px solid #ff0000;
+                box-shadow: 0px 0px 8px #ff0000;
+                -moz-box-shadow: 0px 0px 8px #ff0000;
+                -webkit-box-shadow: 0px 0px 8px #ff0000;
             }
 
             #score-table {
@@ -74,7 +87,7 @@
         <script src="/socket.io/socket.io.js"></script>
     </head>
     <body>
-        <canvas id="screen" width="10" height="10"></canvas>
+        <canvas id="screen" width="10" height="10" class='damage-border'></canvas>
         <table id="score-table"></table>
 
         <script type="module">
