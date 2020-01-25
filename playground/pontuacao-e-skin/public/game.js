@@ -231,12 +231,12 @@ export default function createGame() {
      * generate fruits based on collission and remaining user points
      */
     function explodeFruits(qtd, x, y) {
-        let { screen, config } = state
+        let { screen:{width, height, pixelsPerFields}, config } = state
         //calculate possible new coordinates
-        let maxX = Math.min(x + config.maxCollisionDistance, screen.width)
-        let minX = Math.max(x - config.maxCollisionDistance, 0)
-        let maxY = Math.min(y + config.maxCollisionDistance, screen.height)
-        let minY = Math.max(y - config.maxCollisionDistance, 0)
+        let maxX = Math.min(x + config.maxCollisionDistance, width-1)
+        let minX = Math.max(x - config.maxCollisionDistance, 1)
+        let maxY = Math.min(y + config.maxCollisionDistance, height-1)
+        let minY = Math.max(y - config.maxCollisionDistance, 1)
 
         let rest = qtd
         while (rest > 0) {
