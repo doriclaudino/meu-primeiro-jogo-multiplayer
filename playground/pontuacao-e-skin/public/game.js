@@ -7,7 +7,7 @@ export default function createGame() {
         screen: {
             width: 25,
             height: 25,
-            pixelsPerFields: 5,
+            pixelsPerFields: 20, //less than 15 is hard to read the points
         },
         config: {
             maxCollisionDistance: 4,
