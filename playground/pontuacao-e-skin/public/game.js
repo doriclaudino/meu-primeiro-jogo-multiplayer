@@ -73,8 +73,22 @@ export default function createGame() {
         })
     }
 
-    function addFruit(command) {
+    //retorna array com os players proximos a coordenada
+    function getPlayersAround(coords){
+        let { config:{maxCollisionDistance}, players } = state
+        let playersAround = []
+        
+        for (const playerId in players) {
+            const player = players[playerId]
+            const {x,y} = player
+            const distance = Math.sqrt((coords.x - x) * (coords.y-y));
+            if(distance <= maxCollisionDistance)
+                playersAround.push(playerId)              
+        }
+        return playersAround        
+    }
 
+    function addFruit(command) {
         const fruitX = command ? command.fruitX : Math.floor(Math.random() * state.screen.width)
         const fruitY = command ? command.fruitY : Math.floor(Math.random() * state.screen.height)
         const fruitId = command ? command.fruitId : `${fruitX}-${fruitY}`
@@ -88,6 +102,13 @@ export default function createGame() {
             y: fruitY,
             quantity: quantity + oldQuantity
         }
+        
+        //new fruit dispatch sound for who is around
+        notifyAll({
+            type: 'play-audio',
+            audio: 'newFruit',
+            playersId: getPlayersAround(state.fruits[fruitId])
+        })  
 
         notifyAll({
             type: 'add-fruit',
@@ -99,21 +120,35 @@ export default function createGame() {
     }
 
     function removeFruit(command) {
-        const fruitId = command.fruitId
-
-        delete state.fruits[fruitId]
+        const {fruitId, playerId} = command
+        
+        delete state.fruits[fruitId]          
+        
+        //make sound for who ate the fruit
+        notifyAll({
+            type: 'play-audio',
+            audio: 'eatFruit',
+            playersId: [playerId]
+        })        
 
         notifyAll({
             type: 'remove-fruit',
-            fruitId: fruitId,
+            fruitId
         })
-    }
+    }    
 
     function onBorderShock(player) {
         const { config: { wallCollisionCost } } = state
         let shockCost = Math.min(player.score, wallCollisionCost)
         state.players[player.playerId].score -= shockCost
         explodeFruits(shockCost, player.x, player.y)
+
+        //only play this sound for this user who sock against the wall
+        notifyAll({
+            type: 'play-audio',
+            audio: 'wallCollision',
+            playersId: [player.playerId]
+        })   
     }
 
     function movePlayer(command) {
@@ -174,6 +209,13 @@ export default function createGame() {
 
                 state.players[otherPlayerKey].score -= otherPlayerDiscount
                 state.players[playerId].score -= playerDiscount
+                
+                //make sound for 2 users when crash
+                notifyAll({
+                    type: 'play-audio',
+                    audio: 'playerCollision',
+                    playersId: [playerId,otherPlayerKey]
+                }) 
 
                 explodeFruits(totalFruits, player.x, player.y)
             }
@@ -222,7 +264,9 @@ export default function createGame() {
 
             if (player.x === fruit.x && player.y === fruit.y) {
                 // console.log(`COLLISION between ${playerId} and ${fruitId}`)
-                removeFruit({ fruitId: fruitId })
+
+                //only make sound for this user
+                removeFruit({ fruitId, playerId })
                 player.score += fruit.quantity
             }
         }

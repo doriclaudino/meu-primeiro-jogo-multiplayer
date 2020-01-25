@@ -33,10 +33,10 @@ export default function renderScreen(screen, scoreTable, game, requestAnimationF
     })
 }
 
-    //all skin is based on 5 pixels?, this function convert for responsive values
-    function responsiveMeasure(initialValue, pixelsPerFields) {
-        return initialValue * (pixelsPerFields / 5)
-    }
+//all skin is based on 5 pixels?, this function convert for responsive values
+function responsiveMeasure(initialValue, pixelsPerFields) {
+    return initialValue * (pixelsPerFields / 5)
+}
 
 function drawPlayer(screenContext, player, game, isCurrentPlayer = false) {
     const { screen: { pixelsPerFields } } = game.state
