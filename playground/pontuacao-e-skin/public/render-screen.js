@@ -33,6 +33,11 @@ export default function renderScreen(screen, scoreTable, game, requestAnimationF
     })
 }
 
+    //all skin is based on 5 pixels?, this function convert for responsive values
+    function responsiveMeasure(initialValue, pixelsPerFields) {
+        return initialValue * (pixelsPerFields / 5)
+    }
+
 function drawPlayer(screenContext, player, game, isCurrentPlayer = false) {
     const { screen: { pixelsPerFields } } = game.state
 
@@ -52,9 +57,12 @@ function drawPlayer(screenContext, player, game, isCurrentPlayer = false) {
 
     // Draw eyes and mouth
     screenContext.fillStyle = eyeAndMouthColors
-    screenContext.fillRect(x + 1, y + 1, 1, 1)
-    screenContext.fillRect(x + 3, y + 1, 1, 1)
-    screenContext.fillRect(x + 1, y + 3, 3, 1)
+    screenContext.fillRect(x + responsiveMeasure(1, pixelsPerFields), y + responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields))
+    screenContext.fillRect(x + responsiveMeasure(3, pixelsPerFields), y + responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields))
+    screenContext.fillRect(x + responsiveMeasure(1, pixelsPerFields), y + responsiveMeasure(3, pixelsPerFields), responsiveMeasure(3, pixelsPerFields), responsiveMeasure(1, pixelsPerFields))
+    screenContext.fillStyle = 'black'
+    screenContext.font = "10px Arial";
+    screenContext.fillText(player.score.toString(), x, y - 3);
 }
 
 function drawFruit(screenContext, fruit, game) {
@@ -68,16 +76,16 @@ function drawFruit(screenContext, fruit, game) {
 
     // Draw strawberry body
     screenContext.fillStyle = color
-    screenContext.fillRect(x, y + 1, 1, 2)
-    screenContext.fillRect(x + 4, y + 1, 1, 2)
-    screenContext.fillRect(x + 1, y + 1, 1, 3)
-    screenContext.fillRect(x + 3, y + 1, 1, 3)
-    screenContext.fillRect(x + 2, y + 2, 1, 3)
+    screenContext.fillRect(x, y + responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(2, pixelsPerFields))
+    screenContext.fillRect(x + responsiveMeasure(4, pixelsPerFields), y + responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(2, pixelsPerFields))
+    screenContext.fillRect(x + responsiveMeasure(1, pixelsPerFields), y + responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(3, pixelsPerFields))
+    screenContext.fillRect(x + responsiveMeasure(3, pixelsPerFields), y + responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(3, pixelsPerFields))
+    screenContext.fillRect(x + responsiveMeasure(2, pixelsPerFields), y + responsiveMeasure(2, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(3, pixelsPerFields))
 
     // Draw green leaf
     screenContext.fillStyle = '#00a933'
-    screenContext.fillRect(x + 1, y, 3, 1)
-    screenContext.fillRect(x + 2, y + 1, 1, 1)
+    screenContext.fillRect(x + responsiveMeasure(1, pixelsPerFields), y, responsiveMeasure(3, pixelsPerFields), responsiveMeasure(1, pixelsPerFields))
+    screenContext.fillRect(x + responsiveMeasure(2, pixelsPerFields), y + responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields), responsiveMeasure(1, pixelsPerFields))
 
 }
 
