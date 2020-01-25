@@ -121,6 +121,7 @@
                 newFruit: new sound("./sounds/fruit_drop.mp3"),
                 wallCollision: new sound("./sounds/wall_energy_shock.mp3"),
                 eatFruit: new sound("./sounds/eat_fruit_apple.mp3"),
+                drinkPot: new sound("./sounds/human_swallowing_loud.mp3"), 
             }
 
             socket.on('connect', () => {
@@ -182,7 +183,7 @@
                 if(command.audio && audios[command.audio]){
                     //only play sound for those users
                     if(command.playersId && command.playersId.indexOf(playerId)>-1)
-                        audios[command.audio].play()                                        
+                        audios[command.audio].sound.cloneNode(true).play()                                        
                 }                    
             })
 

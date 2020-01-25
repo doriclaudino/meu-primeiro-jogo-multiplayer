@@ -127,7 +127,7 @@ export default function createGame() {
         //make sound for who ate the fruit
         notifyAll({
             type: 'play-audio',
-            audio: 'eatFruit',
+            audio: 'drinkPot',
             playersId: [playerId]
         })        
 
