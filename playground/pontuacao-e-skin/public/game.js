@@ -7,14 +7,14 @@ export default function createGame() {
         screen: {
             width: 25,
             height: 25,
-            pixelsPerFields: 20, //less than 15 is hard to read the points
+            pixelsPerFields: 16, //less than 15 is hard to read the points
         },
         config: {
             maxCollisionDistance: 4,
-            playerCollisionCost: 5,
-            wallCollisionCost: 30,
-            initialScore: 150,
-            autoDropFruitValue: 30,
+            playerCollisionCost: 100,
+            wallCollisionCost: 150,
+            initialScore: 500,
+            autoDropFruitValue: 121,
         }
     }
 

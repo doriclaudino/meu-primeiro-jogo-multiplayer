@@ -88,8 +88,11 @@
 </head>
 
 <body>
+<img id="potions-img" src="./img/potions2.png"/>
 	<canvas id="screen" width="10" height="10" class='damage-border'></canvas>
-	<table id="score-table"></table>
+	
+    <table id="score-table"></table>
+	
 
 	<script type="module">
 		import createGame from './game.js'
@@ -131,9 +134,10 @@
 
                 const screen = document.getElementById('screen')
                 const scoreTable = document.getElementById('score-table')
+                const potionsImg = document.getElementById('potions-img')
                 
                 setupScreen(screen, game)
-                renderScreen(screen, scoreTable, game, requestAnimationFrame, playerId)
+                renderScreen(screen, scoreTable, game, requestAnimationFrame, playerId, potionsImg)
             })
 
             socket.on('disconnect', () => {

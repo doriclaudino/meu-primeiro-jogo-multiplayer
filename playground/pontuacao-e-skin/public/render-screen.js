@@ -4,7 +4,7 @@ export function setupScreen(canvas, game) {
     canvas.height = height * pixelsPerFields
 }
 
-export default function renderScreen(screen, scoreTable, game, requestAnimationFrame, currentPlayerId) {
+export default function renderScreen(screen, scoreTable, game, requestAnimationFrame, currentPlayerId, potionsImg) {
     const context = screen.getContext('2d')
     context.fillStyle = 'white'
     const { screen: { width, height, pixelsPerFields } } = game.state
@@ -17,7 +17,7 @@ export default function renderScreen(screen, scoreTable, game, requestAnimationF
 
     for (const fruitId in game.state.fruits) {
         const fruit = game.state.fruits[fruitId]
-        drawFruit(context, fruit, game)
+        drawPot(context, fruit, game, potionsImg)
     }
 
     const currentPlayer = game.state.players[currentPlayerId]
@@ -29,8 +29,34 @@ export default function renderScreen(screen, scoreTable, game, requestAnimationF
     updateScoreTable(scoreTable, game, currentPlayerId)
 
     requestAnimationFrame(() => {
-        renderScreen(screen, scoreTable, game, requestAnimationFrame, currentPlayerId)
+        renderScreen(screen, scoreTable, game, requestAnimationFrame, currentPlayerId, potionsImg)
     })
+}
+
+
+function drawPot(context, fruit, game, potionsImg) {
+    const { screen: { pixelsPerFields } } = game.state
+    let { x, y, quantity } = fruit
+    x *= pixelsPerFields
+    y *= pixelsPerFields
+
+    //our pot size on img
+    const pictSize = 16
+
+    //divided by 10, min 1, max 9
+    const line = Math.min(Math.floor(quantity / 10), 9) || 1
+
+    //maximum position is 99
+    const column = quantity > 100 ? 9 : Math.floor(quantity % 10)
+
+    const spriteX = line * pictSize
+    const spriteY = column * pictSize
+    context.drawImage(potionsImg, spriteY, spriteX, 16, 16, x, y, pixelsPerFields, pixelsPerFields);
+
+    //show texts
+    context.fillStyle = 'black'
+    context.font = "10px Arial";
+    context.fillText(quantity.toString(), x, y - 3);
 }
 
 //all skin is based on 5 pixels?, this function convert for responsive values
