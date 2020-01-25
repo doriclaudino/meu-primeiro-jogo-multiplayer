@@ -42,17 +42,14 @@ function drawPot(context, fruit, game, potionsImg) {
 
     //our pot size on img
     const pictSize = 16
+    let column = Math.floor((quantity - 1) % 10)
+    let line = Math.floor((quantity - 1) / 10)
 
-    //divided by 10, min 0, max 9
-    const line = Math.min(Math.floor(quantity / 10), 9)
+    if (line > 0 && column <9)
+        line--
 
-    //maximum position is 99
-    let column = 9
-    //less than 10
-    if (line === 0)
-        column = Math.floor(quantity % 10) - 1
-    else if (quantity <= 99)
-        column = Math.floor(quantity % 10)
+    line = Math.min(line, 9)
+    column = Math.min(column, 9)
 
     const spriteX = line * pictSize
     const spriteY = column * pictSize
